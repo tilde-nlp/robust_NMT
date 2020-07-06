@@ -10,17 +10,36 @@ import re
 from collections import Counter
 from random import choice
 
-
-def words(text): return re.findall(r'\w+', text.lower())
-
-
-WORDS = Counter(words(open('../../../marcis/NMT/mtm2019/data/train.tok.clean.tc.lv').read()))
-WORDS = Counter({x: WORDS[x] for x in WORDS if WORDS[x] >= 10})
+WORDS = {}
+lang = ""
 
 
-def P(word, N=sum(WORDS.values())):
+def init_lang(language):
+    global lang
+    lang = language
+
+
+def get_words():
+    global WORDS
+    global lang
+
+    if len(WORDS) == 0:
+        def words(text): return re.findall(r'\w+', text.lower())
+
+        file = {'lv': '/home/TILDE.LV/arturs.stafanovics/robust_NMT/data/lv/corpus.tc.lv',
+                'lt': '/home/TILDE.LV/arturs.stafanovics/robust_NMT/data/lt/train.tok.tc.lt',
+                'et': '/home/TILDE.LV/arturs.stafanovics/robust_NMT/data/et/train.tc.et'}[lang]
+
+        WORDS = Counter(words(open(file).read()))
+        WORDS = Counter({x: WORDS[x] for x in WORDS if WORDS[x] >= 10})
+    return WORDS
+
+
+def P(word, N=-1):
+    if N == -1:
+        N = sum(get_words().values())
     "Probability of `word`."
-    return WORDS[word] / N
+    return get_words()[word] / N
 
 
 def correction(word):
@@ -42,7 +61,7 @@ def sampleSubstitute(word):
 
 def known(words):
     "The subset of `words` that appear in the dictionary of WORDS."
-    return set(w for w in words if w in WORDS)
+    return set(w for w in words if w in get_words())
 
 
 def edits1(word):
