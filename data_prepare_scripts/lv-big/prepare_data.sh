@@ -33,7 +33,7 @@ VALIDATION=newsdev2017
     value=${functions[$key]}
     mkdir -p $key
     (
-      python "$PROJECT_ROOT"/src/add_noise.py --functions $value <$CORPUS.tc.$LANG >$key/$CORPUS.tc.$LANG
+      python "$PROJECT_ROOT"/src/add_noise.py --functions $value <$CORPUS.tc.$LANG >$key/$CORPUS.tc.$LANG --lang=$LANG
       python "$EXP_SUBWORD_NMT_DIR"/apply_bpe.py -c bpe.codes --vocabulary bpe.vocab.$LANG --vocabulary-threshold $threshold <$key/$CORPUS.tc.$LANG >$key/$CORPUS.tc.bpe.$LANG
       cat $CORPUS.tc.bpe.$LANG >>$key/$CORPUS.tc.bpe.$LANG
       cat $CORPUS.tc.bpe.en $CORPUS.tc.bpe.en >$key/$CORPUS.tc.bpe.en

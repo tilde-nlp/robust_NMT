@@ -37,4 +37,21 @@ VALIDATION=newsdev2017
     ) &
   done
   wait
+
+  declare -A gen_10x_functions=(
+    ["10x_add-diacritic"]="2"
+    ["10x_permute-letters"]="4"
+    ["10x_confuse-letters"]="6"
+    ["10x_sample-substitute"]="7"
+  )
+  for key in "${!gen_10x_functions[@]}"; do
+    value=${gen_10x_functions[$key]}
+    (
+      for i in {1..10}; do
+        python3 "$PROJECT_ROOT"/src/add_noise.py --functions $value <$VALIDATION.tc.lv >>validation/$VALIDATION.tc.$key.$LANG --lang $LANG
+      done
+      python3 "$EXP_SUBWORD_NMT_DIR"/apply_bpe.py -c bpe.codes --vocabulary bpe.vocab.$LANG --vocabulary-threshold $threshold <validation/$VALIDATION.tc.$key.$LANG >validation/$VALIDATION.tc.$key.bpe.$LANG
+    )&
+  done
+  wait
 )

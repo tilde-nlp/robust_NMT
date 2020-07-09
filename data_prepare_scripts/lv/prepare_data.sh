@@ -15,14 +15,14 @@ VALIDATION=newsdev2017
   operations=25000
   threshold=50
 
-#  # Build BPE vocabulary
-#  python3 "$EXP_SUBWORD_NMT_DIR"/learn_joint_bpe_and_vocab.py --input "$CORPUS".tc.en "$CORPUS".tc."$LANG" -s $operations -o bpe.codes --write-vocabulary bpe.vocab.en bpe.vocab."$LANG"
-#
-#  # base
-#  for file in "$VALIDATION" "$CORPUS"; do
-#    python3 "$EXP_SUBWORD_NMT_DIR"/apply_bpe.py -c bpe.codes --vocabulary bpe.vocab.en --vocabulary-threshold $threshold <"$file".tc.en >"$file".tc.bpe.en
-#    python3 "$EXP_SUBWORD_NMT_DIR"/apply_bpe.py -c bpe.codes --vocabulary bpe.vocab."$LANG" --vocabulary-threshold $threshold <"$file".tc."$LANG" >"$file".tc.bpe."$LANG"
-#  done
+  # Build BPE vocabulary
+  python3 "$EXP_SUBWORD_NMT_DIR"/learn_joint_bpe_and_vocab.py --input "$CORPUS".tc.en "$CORPUS".tc."$LANG" -s $operations -o bpe.codes --write-vocabulary bpe.vocab.en bpe.vocab."$LANG"
+
+  # base
+  for file in "$VALIDATION" "$CORPUS"; do
+    python3 "$EXP_SUBWORD_NMT_DIR"/apply_bpe.py -c bpe.codes --vocabulary bpe.vocab.en --vocabulary-threshold $threshold <"$file".tc.en >"$file".tc.bpe.en
+    python3 "$EXP_SUBWORD_NMT_DIR"/apply_bpe.py -c bpe.codes --vocabulary bpe.vocab."$LANG" --vocabulary-threshold $threshold <"$file".tc."$LANG" >"$file".tc.bpe."$LANG"
+  done
 
 
   declare -A functions=(
@@ -51,7 +51,7 @@ VALIDATION=newsdev2017
     value=${functions[$key]}
     mkdir -p $key
     (
-      python "$PROJECT_ROOT"/src/add_noise.py --functions $value <$CORPUS.tc.$LANG >$key/$CORPUS.tc.$LANG --lang $LANG
+      python "$PROJECT_ROOT"/src/add_noise.py --functions $value --lang $LANG <$CORPUS.tc.$LANG >$key/$CORPUS.tc.$LANG
       python "$EXP_SUBWORD_NMT_DIR"/apply_bpe.py -c bpe.codes --vocabulary bpe.vocab.$LANG --vocabulary-threshold $threshold <$key/$CORPUS.tc.$LANG >$key/$CORPUS.tc.bpe.$LANG
       cat $CORPUS.tc.bpe.$LANG >>$key/$CORPUS.tc.bpe.$LANG
       cat $CORPUS.tc.bpe.en $CORPUS.tc.bpe.en >$key/$CORPUS.tc.bpe.en

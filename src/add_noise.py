@@ -101,8 +101,9 @@ def confuse_letters(word):
         return word[0: index] + confusion.upper() + word[index + 1:]
 
 
-def latinize(word):
-    mapping = {'lv': LV_MAPPING, 'lt': LT_MAPPING, 'et': ET_MAPPING}[lang]
+def latinize(word, mapping=None):
+    if mapping is None:
+        mapping = {'lv': LV_MAPPING, 'lt': LT_MAPPING, 'et': ET_MAPPING}[lang]
     word = "".join([mapping[l] if l in mapping else l for l in word])
     return word
 
@@ -110,7 +111,7 @@ def latinize(word):
 def phonetic_latinize(word):
     if lang in {'et', 'lt'}:
         return word
-    return latinize(word)
+    return latinize(word, LV_PHONETIC_MAPPING)
 
 
 def add_diacritic(word):
@@ -207,7 +208,7 @@ def main():
     parser.add_argument('--lang', required=True, type=str)
     args = parser.parse_args()
     global lang
-    lang = args.lang
+    lang = args.lang[0:2]
     spell.init_lang(lang)
 
     noise_functions = [x for index, x in enumerate(all_noise_functions) if index in args.functions]
