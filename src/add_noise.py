@@ -1,7 +1,7 @@
-import random
-import sys
-import string
 import argparse
+import random
+import string
+import sys
 import spell
 
 lang = ""
@@ -12,14 +12,15 @@ LV_PHONETIC_MAPPING = dict(zip([l for l in "āčēģīķļņšūž" + "āčēģ�
                                                               "gj", "ii", "kj",
                                                               "lj", "nj", "sh",
                                                               "uu", "zh"]))))
-LV_REVERSE_MAPPING = dict(zip("acegiklnsuz" + "acegiklnsuz".upper(), "āčēģīķļņšūž" + "āčēģīķļņšūž".upper()))
+
 LV_MAPPING = dict(zip("āčēģīķļņšūž" + "āčēģīķļņšūž".upper(), "acegiklnsuz" + "acegiklnsuz".upper()))
+LV_REVERSE_MAPPING = {v: k for k, v in LV_MAPPING.items()}
 
-ET_REVERSE_MAPPING = dict(zip("szoaou" + "szoaou".upper(), "šžõäöü" + "šžõäöü".upper()))
 ET_MAPPING = dict(zip("šžõäöü" + "šžõäöü".upper(), "szoaou" + "szoaou".upper()))
+ET_REVERSE_MAPPING = {v: k for k, v in ET_MAPPING.items()}
 
-LT_REVERSE_MAPPING = dict(zip("aceeisuuz" + "aceeisuuz".upper(), "ąčęėįšųūž" + "ąčęėįšųūž".upper()))
 LT_MAPPING = dict(zip("ąčęėįšųūž" + "ąčęėįšųūž".upper(), "aceeisuuz" + "aceeisuuz".upper()))
+LT_REVERSE_MAPPING = {v: k for k, v in LT_MAPPING.items()}
 
 MOSES_TOKENIZER_ESCAPE_CHARACTERS = {
     '&': '&amp;',
@@ -32,10 +33,7 @@ MOSES_TOKENIZER_ESCAPE_CHARACTERS = {
     ']': '&#93;'
 }
 
-PUNCTUATION_TOKENS = [
-                         s if s not in MOSES_TOKENIZER_ESCAPE_CHARACTERS else MOSES_TOKENIZER_ESCAPE_CHARACTERS[s] for s
-                         in
-                         string.punctuation] + ['@-@']
+PUNCTUATION_TOKENS = list(string.punctuation) + ['@-@'] + list(MOSES_TOKENIZER_ESCAPE_CHARACTERS.values())
 
 
 class StrictList(list):
@@ -189,7 +187,6 @@ all_noise_functions = [(latinize, "<0>"), (phonetic_latinize, "<1>"), (add_diacr
                        (add_punctuation, "<10>")]
 
 
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--functions', nargs='+', required=False, type=int, help="""
@@ -206,18 +203,23 @@ def main():
     add_punctuation: 10
     """)
     parser.add_argument('--lang', required=True, type=str)
+    parser.add_argument('--word-corpora', required=False, type=str)
     args = parser.parse_args()
+
     global lang
     lang = args.lang[0:2]
-    spell.init_lang(lang)
+
+    if 7 in args.functions:
+        assert args.word_corpora is not None, "When using sample substitute noise, provide word corpora"
+        spell.set_corpora(args.word_corpora)
 
     noise_functions = [x for index, x in enumerate(all_noise_functions) if index in args.functions]
-    assert len(noise_functions) != 0, f"Provide at least one valid noise function id, given: {args.functions}"
+    assert len(noise_functions) != 0, "Provide at least one valid noise function id, given: " + str(args.functions)
 
-    i = 0
+    noise_function_index = 0
     for sentence in sys.stdin:
         sentence = sentence.strip()
-        noise_function, tag = noise_functions[i % len(noise_functions)]
+        noise_function, tag = noise_functions[noise_function_index]
         words = sentence.split()
         if tag in {'<0>', '<1>', '<8>', '<9>', '<10>'}:
             print(noise_function(sentence))
@@ -235,7 +237,7 @@ def main():
             else:
                 index, w = random.choice(applicableWords)
                 print(" ".join(words[0:index] + [noise_function(w)] + words[index + 1:]))
-        i += 1
+        noise_function_index = (noise_function_index + 1) % len(noise_functions)
 
 
 if __name__ == "__main__":

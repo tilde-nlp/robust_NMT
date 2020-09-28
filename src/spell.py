@@ -11,12 +11,12 @@ from collections import Counter
 from random import choice
 
 WORDS = {}
-lang = ""
+corpora_file = ""
 
 
-def init_lang(language):
-    global lang
-    lang = language
+def set_corpora(corpora):
+    global corpora_file
+    corpora_file = corpora
 
 
 def get_words():
@@ -24,13 +24,9 @@ def get_words():
     global lang
 
     if len(WORDS) == 0:
+        global corpora_file
         def words(text): return re.findall(r'\w+', text.lower())
-
-        file = {'lv': '/home/TILDE.LV/arturs.stafanovics/robust_NMT/data/lv/corpus.tc.lv',
-                'lt': '/home/TILDE.LV/arturs.stafanovics/robust_NMT/data/lt/train.tok.tc.lt',
-                'et': '/home/TILDE.LV/arturs.stafanovics/robust_NMT/data/et/train.tc.et'}[lang]
-
-        WORDS = Counter(words(open(file).read()))
+        WORDS = Counter(words(open(corpora_file).read()))
         WORDS = Counter({x: WORDS[x] for x in WORDS if WORDS[x] >= 10})
     return WORDS
 
