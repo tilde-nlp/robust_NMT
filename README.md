@@ -34,7 +34,7 @@ Noise type is specified by providing space-separated function ids to `--function
     confuse letters: 6
     sample substitute: 7
     remove punctuation: 8
-    add coma: 9
+    add comma: 9
     add punctuation: 10
 When using `sample substitute` noise type you must also provide `--word-corpora` which is used to build model to sample similar words.
 <br>
