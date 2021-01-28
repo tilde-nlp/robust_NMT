@@ -33,7 +33,7 @@ MOSES_TOKENIZER_ESCAPE_CHARACTERS = {
     ']': '&#93;'
 }
 
-PUNCTUATION_TOKENS = list(string.punctuation) + ['@-@'] + list(MOSES_TOKENIZER_ESCAPE_CHARACTERS.values())
+PUNCTUATION_TOKENS = list(string.punctuation)
 
 
 class StrictList(list):
@@ -123,7 +123,8 @@ def add_diacritic(word):
 
 
 def remove_punctuation(sentence):
-    return " ".join([item for item in sentence.split() if item not in PUNCTUATION_TOKENS])
+    return " ".join([item for item in sentence.split() if
+                     item not in PUNCTUATION_TOKENS + ['@-@'] + list(MOSES_TOKENIZER_ESCAPE_CHARACTERS.values())])
 
 
 def add_punctuation(sentence):
