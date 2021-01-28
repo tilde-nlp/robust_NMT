@@ -1,5 +1,7 @@
 # Robust Neural Machine Translation: Modeling Orthographic and Interpunctual Variation
 Repository contains code and evaluation data for experiments described in [Robust Neural Machine Translation: Modeling Orthographic and Interpunctual Variation](https://arxiv.org/abs/2009.05460)
+
+__The research has been supported by the European Regional Development Fund within the project “Multilingual Artificial Intelligence Based Human Computer Interaction” No. 1.1.1.1/18/A/148.__
 # Citation 
 ```
 @inproceedings{Bergmanis2020,
@@ -34,7 +36,7 @@ Noise type is specified by providing space-separated function ids to `--function
     confuse letters: 6
     sample substitute: 7
     remove punctuation: 8
-    add coma: 9
+    add comma: 9
     add punctuation: 10
 When using `sample substitute` noise type you must also provide `--word-corpora` which is used to build model to sample similar words.
 <br>
@@ -60,4 +62,5 @@ python src/modified_ter.py \
     --input /home/10x_add-diacritic.lv /home/10x_confuse-letters.lv /home/10x_permute-letters.lv \
     --ref /home/10x_upscale.lv \
 ```
+
 
