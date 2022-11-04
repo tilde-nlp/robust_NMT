@@ -1,7 +1,6 @@
 # Robust Neural Machine Translation: Modeling Orthographic and Interpunctual Variation
 Repository contains code and evaluation data for experiments described in [Robust Neural Machine Translation: Modeling Orthographic and Interpunctual Variation](https://arxiv.org/abs/2009.05460)
 
-__The research has been supported by the European Regional Development Fund within the project “Multilingual Artificial Intelligence Based Human Computer Interaction” No. 1.1.1.1/18/A/148.__
 # Citation 
 ```
 @inproceedings{Bergmanis2020,
@@ -63,4 +62,6 @@ python src/modified_ter.py \
     --ref /home/10x_upscale.lv \
 ```
 
+## Acknowledgements
+The research has been supported by the European Regional Development Fund within the project “Multilingual Artificial Intelligence Based Human Computer Interaction” No. 1.1.1.1/18/A/148.
 
